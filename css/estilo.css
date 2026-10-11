@@ -357,3 +357,61 @@ button { font-family: inherit; cursor: pointer; }
 .band-cel { display: inline-block; vertical-align: middle; }
 @media (max-width: 700px) { .sub-colunas, .premios { grid-template-columns: 1fr; } }
 @media (max-height: 460px) { .premio .icone { display: none; } .premio { padding: 5px; } .lista-sub { max-height: 40vh; } }
+[hidden] { display: none !important; }
+
+/* ---------- jogador no menu ---------- */
+.avatar { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; flex: none;
+  font-family: 'Lilita One', 'Nunito', sans-serif; font-size: 18px; color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.9); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); }
+.avatar.grande { width: 64px; height: 64px; font-size: 28px; }
+.chip-jogador { display: flex; align-items: center; gap: 10px; align-self: flex-start; padding: 6px 12px 6px 6px; border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.35); background: rgba(6, 20, 40, 0.6); color: #fff; text-align: left; }
+.chip-jogador:hover { border-color: var(--amarelo); }
+.chip-textos { display: flex; flex-direction: column; line-height: 1.1; }
+.chip-textos small { font-size: 11px; opacity: 0.75; font-weight: 800; }
+.chip-textos b { font-size: 16px; }
+.chip-trocar { font-size: 12px; font-weight: 900; color: var(--amarelo); margin-left: 4px; }
+
+/* ---------- cadastro ---------- */
+.cad-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.cad-cartao { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 10px 10px; border-radius: 16px;
+  border: 2px solid transparent; background: rgba(255, 255, 255, 0.08); color: #fff; }
+.cad-cartao:hover { border-color: var(--amarelo); }
+.cad-cartao.atual { border-color: var(--amarelo); background: rgba(255, 212, 0, 0.12); }
+.cad-cartao b { font-size: 16px; }
+.cad-cartao small { font-weight: 800; opacity: 0.8; font-size: 12px; }
+.cad-editar { position: absolute; top: 6px; right: 6px; border: 0; border-radius: 8px; padding: 3px 8px; font-size: 12px; font-weight: 900;
+  background: rgba(255, 255, 255, 0.15); color: #fff; }
+.cad-novo { border-style: dashed; border-color: rgba(255, 255, 255, 0.35); justify-content: center; min-height: 130px; }
+.cad-novo .mais { font-family: 'Lilita One'; font-size: 40px; line-height: 1; color: var(--amarelo); }
+.cad-form { display: flex; flex-direction: column; gap: 10px; }
+.cad-previa { display: flex; align-items: center; gap: 12px; }
+.cad-previa b { font-family: 'Lilita One'; font-weight: 400; font-size: 26px; color: var(--amarelo); }
+.cad-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+.campo { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.campo label, .rotulo-campo { font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.85; }
+.campo input, .campo select { font: 800 17px 'Nunito', system-ui, sans-serif; padding: 10px 12px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.35); color: #fff; user-select: text; -webkit-user-select: text; touch-action: auto; min-width: 0; }
+.campo input:focus, .campo select:focus { outline: none; border-color: var(--amarelo); }
+.campo select option { color: #111; }
+.cad-cores { display: flex; gap: 8px; flex-wrap: wrap; }
+.cad-cores button { width: 34px; height: 34px; border-radius: 50%; border: 3px solid transparent; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+.cad-cores button.ativo { border-color: #fff; transform: scale(1.12); }
+.cad-botoes { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+button:focus-visible, .bt:focus-visible { outline: 3px solid var(--amarelo); outline-offset: 2px; }
+
+/* ---------- ranking ---------- */
+#abas-ranking { margin-bottom: 8px; }
+.tabela-rolagem { overflow-x: auto; }
+.tabela-ranking { width: 100%; border-collapse: collapse; font-weight: 800; font-variant-numeric: tabular-nums; }
+.tabela-ranking th { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; padding: 4px 6px; text-align: center; white-space: nowrap; }
+.tabela-ranking td { padding: 6px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center; white-space: nowrap; }
+.tabela-ranking td.nome { text-align: left; }
+.tabela-ranking td.nome div { display: flex; align-items: center; gap: 8px; }
+.tabela-ranking td.nome .avatar { width: 30px; height: 30px; font-size: 13px; border-width: 2px; }
+.tabela-ranking td.pos { font-size: 18px; width: 36px; }
+.tabela-ranking td.destaque { color: var(--amarelo); font-size: 18px; }
+.tabela-ranking tr.atual td { background: rgba(255, 212, 0, 0.1); }
+.res-pontos { margin: 0; font-weight: 900; color: var(--amarelo); }
+.res-pontos:empty { display: none; }
+@media (max-width: 700px) { .cad-campos { grid-template-columns: 1fr; } }

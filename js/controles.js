@@ -19,7 +19,9 @@ const toque = { passe: false, chute: false, corrida: false, troca: false, carrin
 let anterior = { passe: false, chute: false, troca: false, carrinho: false };
 
 export function iniciarControles() {
+  const digitando = e => e.target && e.target.closest && e.target.closest('input, select, textarea');
   window.addEventListener('keydown', e => {
+    if (digitando(e)) return; // escrevendo o apelido: as teclas não controlam o jogador
     teclas.add(e.code);
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
   });

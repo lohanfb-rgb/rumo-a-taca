@@ -20,6 +20,11 @@
   <!-- ================= MENU PRINCIPAL ================= -->
   <section id="menu" class="tela ativa">
     <div class="menu-caixa">
+      <button class="chip-jogador" data-acao="trocar-jogador" id="chip-jogador">
+        <span id="menu-avatar"></span>
+        <span class="chip-textos"><small>Jogando como</small><b id="menu-apelido">—</b></span>
+        <span class="chip-trocar">Trocar</span>
+      </button>
       <div class="logo">
         <div class="estrelas-logo"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span class="vazia">★</span></div>
         <h1>RUMO À<br><em>TAÇA</em></h1>
@@ -51,10 +56,68 @@
       </div>
       <div class="rodape-menu">
         <button class="bt pequeno" data-acao="album">Álbum <span id="contador-estrelas">★ 0</span></button>
+        <button class="bt pequeno" data-acao="ranking">Ranking</button>
         <button class="bt pequeno" data-acao="artilharia">Artilheiros</button>
         <button class="bt pequeno" data-acao="som" id="bt-som">Som: ligado</button>
         <button class="bt pequeno" data-acao="ajuda">Como jogar</button>
       </div>
+    </div>
+  </section>
+
+  <!-- ================= CADASTRO: QUEM VAI JOGAR? ================= -->
+  <section id="cadastro" class="tela">
+    <div class="painel">
+      <div class="topo-painel">
+        <button class="bt pequeno" data-acao="cad-voltar" id="cad-voltar">◀ Menu</button>
+        <h2 id="cad-titulo">Quem vai jogar?</h2>
+      </div>
+      <div id="cad-lista" class="cad-lista"></div>
+      <form id="cad-form" class="cad-form" hidden>
+        <div class="cad-previa"><span id="cad-previa-avatar"></span><b id="cad-previa-nome">Seu apelido</b></div>
+        <div class="cad-campos">
+          <div class="campo">
+            <label for="cad-apelido">Apelido</label>
+            <input id="cad-apelido" maxlength="14" autocomplete="off" placeholder="Ex.: Pequeno Craque">
+          </div>
+          <div class="campo">
+            <label for="cad-numero">Número da camisa</label>
+            <input id="cad-numero" type="number" min="1" max="99" value="10" inputmode="numeric">
+          </div>
+          <div class="campo">
+            <span class="rotulo-campo">Cor</span>
+            <div id="cad-cores" class="cad-cores"></div>
+          </div>
+          <div class="campo">
+            <label for="cad-favorito">Craque favorito</label>
+            <select id="cad-favorito"></select>
+          </div>
+        </div>
+        <p class="sub-erro" id="cad-erro"></p>
+        <div class="cad-botoes">
+          <button type="button" class="bt pequeno" data-acao="cad-cancelar" id="cad-cancelar">Cancelar</button>
+          <button type="button" class="bt pequeno vermelho" data-acao="cad-apagar" id="cad-apagar" hidden>Apagar jogador</button>
+          <button type="submit" class="bt amarelo" id="cad-salvar">Salvar e jogar</button>
+        </div>
+        <p class="dica">Só pedimos o apelido. Tudo fica guardado neste aparelho.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= RANKING DE JOGADORES ================= -->
+  <section id="ranking" class="tela">
+    <div class="painel largo">
+      <div class="topo-painel">
+        <button class="bt pequeno" data-acao="voltar-ranking">◀ Menu</button>
+        <h2>Ranking de jogadores</h2>
+      </div>
+      <div class="chips" id="abas-ranking">
+        <button data-criterio="pontos">Pontos</button>
+        <button data-criterio="vitorias">Vitórias</button>
+        <button data-criterio="golsPro">Gols</button>
+        <button data-criterio="titulos">Títulos</button>
+      </div>
+      <div class="tabela-rolagem"><table class="tabela-ranking" id="tabela-ranking"></table></div>
+      <p class="dica" id="legenda-ranking"></p>
     </div>
   </section>
 
@@ -200,6 +263,7 @@
       <div class="res-estrelas" id="res-estrelas"></div>
       <p id="res-texto"></p>
       <div id="res-gols" class="res-gols"></div>
+      <p id="res-pontos" class="res-pontos"></p>
       <p id="res-fig-texto" class="res-fig"></p>
       <div id="res-pacotes" class="res-pacotes"></div>
       <div class="res-botoes" id="res-botoes"></div>

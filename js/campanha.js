@@ -3,9 +3,12 @@
 //  Tudo fica salvo só neste aparelho (localStorage).
 // =============================================================
 import { ADVERSARIOS, SELECAO, elencoAdversario, sortearAutor } from './dados.js';
+import { idJogadorAtual } from './jogadores.js';
 
-const CHAVE_CAMPANHA = 'rumoATaca.campanha';
-const CHAVE_PERFIL = 'rumoATaca.perfil';
+// cada jogador cadastrado tem o próprio progresso
+const chaveDoJogador = base => { const id = idJogadorAtual(); return id ? `${base}.${id}` : base; };
+const CHAVE_CAMPANHA_BASE = 'rumoATaca.campanha';
+const CHAVE_PERFIL_BASE = 'rumoATaca.perfil';
 
 export const FASES = ['Grupo · Jogo 1', 'Grupo · Jogo 2', 'Grupo · Jogo 3', '16 avos de final', 'Oitavas de final', 'Quartas de final', 'Semifinal', 'FINAL'];
 
@@ -18,9 +21,9 @@ function gravar(chave, valor) {
 
 // ------------------------------------------------------------ perfil
 export function carregarPerfil() {
-  return ler(CHAVE_PERFIL, { estrelas: 0, estrelasGastas: 0, figurinhas: [], trofeus: {} });
+  return ler(chaveDoJogador(CHAVE_PERFIL_BASE), { estrelas: 0, estrelasGastas: 0, figurinhas: [], trofeus: {} });
 }
-export function salvarPerfil(p) { gravar(CHAVE_PERFIL, p); }
+export function salvarPerfil(p) { gravar(chaveDoJogador(CHAVE_PERFIL_BASE), p); }
 
 export function calcularEstrelas(golsPro, golsContra, venceu) {
   let e = 0;
@@ -64,8 +67,8 @@ export function TODAS_FIGURINHAS() {
 }
 
 // ------------------------------------------------------------ campanha
-export function carregarCampanha() { return ler(CHAVE_CAMPANHA, null); }
-export function apagarCampanha() { try { localStorage.removeItem(CHAVE_CAMPANHA); } catch (e) { /* ok */ } }
+export function carregarCampanha() { return ler(chaveDoJogador(CHAVE_CAMPANHA_BASE), null); }
+export function apagarCampanha() { try { localStorage.removeItem(chaveDoJogador(CHAVE_CAMPANHA_BASE)); } catch (e) { /* ok */ } }
 
 export function novaCampanha(dificuldade) {
   const embaralhar = a => [...a].sort(() => Math.random() - 0.5);
@@ -94,11 +97,11 @@ export function novaCampanha(dificuldade) {
     eliminado: false,
     campeao: false,
   };
-  gravar(CHAVE_CAMPANHA, c);
+  gravar(chaveDoJogador(CHAVE_CAMPANHA_BASE), c);
   return c;
 }
 
-export function salvarCampanha(c) { gravar(CHAVE_CAMPANHA, c); }
+export function salvarCampanha(c) { gravar(chaveDoJogador(CHAVE_CAMPANHA_BASE), c); }
 
 export function adversarioDaFase(c) {
   return ADVERSARIOS.find(a => a.sigla === c.adversarios[c.fase]);

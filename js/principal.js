@@ -11,6 +11,7 @@ import { iniciarControles, atualizarControles, entrada } from './controles.js';
 import { ADVERSARIOS, DIFICULDADES, SELECAO, elencoAdversario } from './dados.js';
 import * as som from './audio.js';
 import * as camp from './campanha.js';
+import * as jog from './jogadores.js';
 
 // ------------------------------------------------------------ 3D
 const canvas = document.getElementById('tela3d');
@@ -304,8 +305,12 @@ function golsHTML(marcadores, adv) {
   return `${br ? `<div><b>Brasil:</b> ⚽ ${br}</div>` : ''}${ad ? `<div><b>${adv ? adv.nome : 'Adversário'}:</b> ⚽ ${ad}</div>` : ''}`;
 }
 
+let ultimosPontos = null; // pontos de ranking do último jogo (mostrados no resultado)
 function mostrarResultado({ titulo, golsBR, golsAdv, adv, estrelas = null, texto = '', botoes, penaltis = null, marcadores = null }) {
   $('res-gols').innerHTML = golsHTML(marcadores, adv);
+  const atual = jog.jogadorAtual();
+  $('res-pontos').textContent = atual && ultimosPontos !== null ? `+${ultimosPontos} pontos no ranking para ${atual.apelido}` : '';
+  ultimosPontos = null;
   $('res-titulo').textContent = titulo;
   const pl = $('res-placar');
   pl.innerHTML = '';
@@ -384,6 +389,7 @@ function jogarAmistoso(adv) {
       const [a, b] = res.gols;
       const venceu = a > b;
       camp.registrarArtilheirosPerfil(res.marcadores);
+      ultimosPontos = jog.registrarResultado({ modo: 'amistoso', golsPro: a, golsContra: b, venceu, empate: a === b, estrelas: camp.calcularEstrelas(a, b, venceu), dificuldade: pref.dificuldade });
       mostrarResultado({
         marcadores: res.marcadores,
         titulo: venceu ? 'Vitória!' : a === b ? 'Empate' : 'Derrota',
@@ -406,6 +412,7 @@ function jogarPenaltis(adv) {
     aoTerminar: res => {
       const venceu = res.vencedor === 0;
       if (venceu) som.narrar('O Brasil venceu nos pênaltis!');
+      ultimosPontos = jog.registrarResultado({ modo: 'penaltis', venceu, estrelas: venceu ? 1 : 0, dificuldade: pref.dificuldade });
       mostrarResultado({
         titulo: venceu ? 'Vitória nos pênaltis!' : 'Perdemos nos pênaltis',
         golsBR: res.placar[0], golsAdv: res.placar[1], adv,
@@ -536,6 +543,10 @@ function terminarJogoCampanha(a, b, adv, fase, venceuPen, placarPen, marcadores 
   camp.registrarArtilheirosPerfil(marcadores);
   const venceu = a > b || venceuPen === true;
   const estrelas = camp.calcularEstrelas(a, b, venceu);
+  ultimosPontos = jog.registrarResultado({
+    modo: 'campanha', golsPro: a, golsContra: b, venceu, empate: !venceu && a === b && venceuPen === null,
+    estrelas, dificuldade: campanha.dificuldade, titulo: !!campanha.campeao,
+  });
   if (campanha.campeao) {
     const perfil = camp.carregarPerfil();
     perfil.trofeus[campanha.dificuldade] = true;
@@ -717,6 +728,133 @@ $('substituicoes').addEventListener('click', e => {
     desenharSubstituicoes();
   }
 });
+// ------------------------------------------------------------ cadastro de jogadores
+const avatarHTML = (j, grande = false) => `<span class="avatar ${grande ? 'grande' : ''}" style="background:${j.cor}">${j.numero}</span>`;
+let editandoId = null;
+let corEscolhida = jog.CORES_AVATAR[0];
+
+function atualizarChipJogador() {
+  const j = jog.jogadorAtual();
+  $('menu-avatar').innerHTML = j ? avatarHTML(j) : '';
+  $('menu-apelido').textContent = j ? j.apelido : 'Ninguém';
+}
+
+function abrirCadastro() {
+  const lista = jog.listarJogadores();
+  $('cad-voltar').hidden = !jog.jogadorAtual();
+  if (!lista.length) { abrirFormCadastro(null); mostrar('cadastro'); return; }
+  $('cad-titulo').textContent = 'Quem vai jogar?';
+  $('cad-form').hidden = true;
+  $('cad-lista').hidden = false;
+  const atualId = jog.idJogadorAtual();
+  $('cad-lista').innerHTML = lista.map(j => `
+    <div class="cad-cartao ${j.id === atualId ? 'atual' : ''}" data-escolher="${j.id}" role="button" tabindex="0">
+      <button class="cad-editar" data-editar="${j.id}" aria-label="Editar ${j.apelido}">Editar</button>
+      ${avatarHTML(j, true)}<b>${j.apelido}</b><small>${(j.stats && j.stats.pontos) || 0} pontos</small>
+    </div>`).join('') +
+    `<button class="cad-cartao cad-novo" data-novo="1"><span class="mais">+</span><b>Novo jogador</b></button>`;
+  mostrar('cadastro');
+}
+
+function abrirFormCadastro(id) {
+  editandoId = id;
+  const j = id ? jog.listarJogadores().find(x => x.id === id) : null;
+  $('cad-titulo').textContent = j ? 'Editar jogador' : 'Novo jogador';
+  $('cad-lista').hidden = true;
+  $('cad-form').hidden = false;
+  $('cad-apagar').hidden = !j;
+  $('cad-apagar').dataset.confirmar = '';
+  $('cad-apagar').textContent = 'Apagar jogador';
+  $('cad-cancelar').hidden = !jog.listarJogadores().length;
+  $('cad-erro').textContent = '';
+  $('cad-apelido').value = j ? j.apelido : '';
+  $('cad-numero').value = j ? j.numero : 10;
+  corEscolhida = j ? j.cor : jog.CORES_AVATAR[jog.listarJogadores().length % jog.CORES_AVATAR.length];
+  $('cad-favorito').innerHTML = SELECAO.jogadores.filter(d => d.pos !== 'GOL').map(d => `<option value="${d.nome}">${d.num} · ${d.nome}</option>`).join('');
+  $('cad-favorito').value = j ? j.favorito : 'Neymar';
+  $('cad-cores').innerHTML = jog.CORES_AVATAR.map(c => `<button type="button" style="background:${c}" data-cor="${c}" aria-label="Cor ${c}"></button>`).join('');
+  atualizarPreviaCadastro();
+}
+
+function atualizarPreviaCadastro() {
+  const apelido = $('cad-apelido').value.trim();
+  const numero = Math.max(1, Math.min(99, Number($('cad-numero').value) || 10));
+  $('cad-previa-avatar').innerHTML = avatarHTML({ cor: corEscolhida, numero }, true);
+  $('cad-previa-nome').textContent = apelido || 'Seu apelido';
+  $('cad-cores').querySelectorAll('button').forEach(b => b.classList.toggle('ativo', b.dataset.cor === corEscolhida));
+}
+
+$('cad-apelido').addEventListener('input', atualizarPreviaCadastro);
+$('cad-numero').addEventListener('input', atualizarPreviaCadastro);
+$('cad-cores').addEventListener('click', e => {
+  const b = e.target.closest('[data-cor]');
+  if (b) { corEscolhida = b.dataset.cor; atualizarPreviaCadastro(); }
+});
+$('cad-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const apelido = $('cad-apelido').value;
+  const erro = jog.validarApelido(apelido, editandoId);
+  if (erro) { $('cad-erro').textContent = erro; $('cad-apelido').focus(); return; }
+  const dados = { apelido, numero: $('cad-numero').value, cor: corEscolhida, favorito: $('cad-favorito').value };
+  if (editandoId) { jog.editarJogador(editandoId, dados); jog.escolherJogador(editandoId); }
+  else jog.criarJogador(dados);
+  aoTrocarJogador();
+});
+$('cad-lista').addEventListener('click', e => {
+  const editar = e.target.closest('[data-editar]');
+  if (editar) { abrirFormCadastro(editar.dataset.editar); return; }
+  if (e.target.closest('[data-novo]')) { abrirFormCadastro(null); return; }
+  const escolher = e.target.closest('[data-escolher]');
+  if (escolher) { jog.escolherJogador(escolher.dataset.escolher); aoTrocarJogador(); }
+});
+$('cad-lista').addEventListener('keydown', e => {
+  const c = e.target.closest('[data-escolher]');
+  if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); jog.escolherJogador(c.dataset.escolher); aoTrocarJogador(); }
+});
+
+function aoTrocarJogador() {
+  const j = jog.jogadorAtual();
+  atualizarChipJogador();
+  atualizarContadorEstrelas();
+  campanha = null;
+  mostrar('menu');
+  if (j) som.narrar(`Bem-vindo, ${j.apelido}!`);
+}
+
+// ------------------------------------------------------------ ranking de jogadores
+let criterioRanking = 'pontos';
+function abrirRanking() {
+  desenharRanking();
+  mostrar('ranking');
+}
+function desenharRanking() {
+  document.querySelectorAll('#abas-ranking button').forEach(b => b.classList.toggle('ativo', b.dataset.criterio === criterioRanking));
+  const lista = jog.ranking(criterioRanking);
+  const atualId = jog.idJogadorAtual();
+  const medalha = i => (i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}º`);
+  const col = c => (c === criterioRanking ? 'destaque' : '');
+  $('tabela-ranking').innerHTML = lista.length
+    ? `<tr><th></th><th style="text-align:left">Jogador</th><th>Pontos</th><th>Jogos</th><th>Vitórias</th><th>Gols</th><th>Títulos</th><th>★</th></tr>` +
+      lista.map((j, i) => `<tr class="${j.id === atualId ? 'atual' : ''}">
+        <td class="pos">${medalha(i)}</td>
+        <td class="nome"><div>${avatarHTML(j)}<span>${j.apelido}</span></div></td>
+        <td class="${col('pontos')}">${j.stats.pontos}</td>
+        <td>${j.stats.jogos}</td>
+        <td class="${col('vitorias')}">${j.stats.vitorias}</td>
+        <td class="${col('golsPro')}">${j.stats.golsPro}</td>
+        <td class="${col('titulos')}">${j.stats.titulos}</td>
+        <td>${j.stats.estrelas}</td></tr>`).join('')
+    : '';
+  const P = jog.PONTOS;
+  $('legenda-ranking').textContent = lista.length
+    ? `Vitória ${P.vitoria} · empate ${P.empate} · gol ${P.gol} · estrela ${P.estrela} · título ${P.titulo} · vitória nos pênaltis ${P.vitoriaPenaltis}. No Titular os pontos valem 1,5×; no Penta, 2×.`
+    : 'Cadastre jogadores e jogue para aparecer no ranking.';
+}
+$('abas-ranking').addEventListener('click', e => {
+  const b = e.target.closest('[data-criterio]');
+  if (b) { criterioRanking = b.dataset.criterio; desenharRanking(); }
+});
+
 // ------------------------------------------------------------ álbum
 let aoVoltarDoAlbum = null;
 function abrirAlbum(aoVoltar = null) {
@@ -776,6 +914,21 @@ document.body.addEventListener('click', e => {
     case 'album': abrirAlbum(); break;
     case 'voltar-album': voltarDoAlbum(); break;
     case 'replay': verReplay(); break;
+    case 'trocar-jogador': abrirCadastro(); break;
+    case 'cad-voltar': mostrar('menu'); break;
+    case 'cad-cancelar': abrirCadastro(); break;
+    case 'cad-apagar':
+      if (b.dataset.confirmar === 'sim') {
+        jog.apagarJogador(editandoId);
+        atualizarChipJogador();
+        abrirCadastro();
+      } else {
+        b.dataset.confirmar = 'sim';
+        b.textContent = 'Toque de novo para apagar';
+      }
+      break;
+    case 'ranking': abrirRanking(); break;
+    case 'voltar-ranking': mostrar('menu'); break;
     case 'substituicoes': abrirSubstituicoes(); break;
     case 'fechar-sub': sobrepor('substituicoes', false); sobrepor('pausa', true); break;
     case 'sub-voltar-jogo': sobrepor('substituicoes', false); pausar(false); break;
@@ -811,6 +964,8 @@ window.addEventListener('keydown', () => som.destravarAudio(), { once: true });
 // ------------------------------------------------------------ loop principal
 iniciarControles();
 montarCena(false);
+atualizarChipJogador();
+if (!jog.jogadorAtual()) abrirCadastro();
 const relogio = new THREE.Clock();
 let anguloMenu = 0;
 
