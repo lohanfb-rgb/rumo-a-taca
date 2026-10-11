@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0a7a34">
+  <title>Rumo à Taça</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilo.css">
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <canvas id="tela3d"></canvas>
+
+  <!-- ================= MENU PRINCIPAL ================= -->
+  <section id="menu" class="tela ativa">
+    <div class="menu-caixa">
+      <div class="logo">
+        <div class="estrelas-logo"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span class="vazia">★</span></div>
+        <h1>RUMO À<br><em>TAÇA</em></h1>
+        <p class="sub">Leve a Seleção Brasileira ao Hexa!</p>
+      </div>
+      <div class="botoes-menu">
+        <button class="bt grande amarelo" data-acao="campanha">Rumo à Taça</button>
+        <button class="bt verde" data-acao="amistoso">Amistoso</button>
+        <button class="bt verde" data-acao="penaltis">Pênaltis</button>
+        <button class="bt azul" data-acao="treino">Treino</button>
+      </div>
+      <div class="opcoes">
+        <div class="opcao">
+          <span class="rotulo">Dificuldade</span>
+          <div class="chips" id="chips-dificuldade">
+            <button data-valor="mirim">Craque Mirim</button>
+            <button data-valor="titular">Titular</button>
+            <button data-valor="penta">Penta</button>
+          </div>
+        </div>
+        <div class="opcao">
+          <span class="rotulo">Cada tempo</span>
+          <div class="chips" id="chips-duracao">
+            <button data-valor="120">2 min</button>
+            <button data-valor="180">3 min</button>
+            <button data-valor="300">5 min</button>
+          </div>
+        </div>
+      </div>
+      <div class="rodape-menu">
+        <button class="bt pequeno" data-acao="album">Álbum <span id="contador-estrelas">★ 0</span></button>
+        <button class="bt pequeno" data-acao="artilharia">Artilheiros</button>
+        <button class="bt pequeno" data-acao="som" id="bt-som">Som: ligado</button>
+        <button class="bt pequeno" data-acao="ajuda">Como jogar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ESCOLHA DO ADVERSÁRIO ================= -->
+  <section id="escolha" class="tela">
+    <div class="painel largo">
+      <div class="topo-painel">
+        <button class="bt pequeno" data-acao="voltar">◀ Voltar</button>
+        <h2 id="titulo-escolha">Escolha o adversário</h2>
+      </div>
+      <div class="opcao mando">
+        <span class="rotulo">Mando de campo</span>
+        <div class="chips" id="chips-mando">
+          <button data-valor="casa">Brasil em casa</button>
+          <button data-valor="neutro">Campo neutro</button>
+          <button data-valor="fora">Fora de casa</button>
+        </div>
+      </div>
+      <div id="grade-adversarios" class="grade-adv"></div>
+    </div>
+  </section>
+
+  <!-- ================= CAMPANHA ================= -->
+  <section id="campanha" class="tela">
+    <div class="painel largo">
+      <div class="topo-painel">
+        <button class="bt pequeno" data-acao="voltar">◀ Menu</button>
+        <h2>Rumo à Taça <small id="dif-campanha"></small></h2>
+      </div>
+      <ol id="trilha" class="trilha"></ol>
+      <div class="campanha-corpo">
+        <div id="proximo-jogo" class="proximo-jogo"></div>
+        <div class="tabela-grupo">
+          <h3>Grupo do Brasil</h3>
+          <table id="tabela-grupo"></table>
+        </div>
+      </div>
+      <div class="acoes-campanha">
+        <button class="bt pequeno vermelho" data-acao="reiniciar-campanha">Começar de novo</button>
+        <button class="bt pequeno" data-acao="artilharia-campanha">Artilharia da Copa</button>
+        <button class="bt grande amarelo" id="bt-jogar-campanha" data-acao="jogar-campanha">Jogar!</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ÁLBUM ================= -->
+  <section id="album" class="tela">
+    <div class="painel largo">
+      <div class="topo-painel">
+        <button class="bt pequeno" data-acao="voltar-album">◀ Voltar</button>
+        <h2>Álbum da Seleção <small id="progresso-album"></small></h2>
+      </div>
+      <div class="trofeus" id="trofeus"></div>
+      <p class="dica">Cada partida vale até 3 estrelas. A cada 5 estrelas você ganha um pacote com 3 figurinhas!</p>
+      <div id="grade-album" class="grade-album"></div>
+    </div>
+  </section>
+
+  <!-- ================= COMO JOGAR ================= -->
+  <section id="ajuda" class="tela">
+    <div class="painel">
+      <div class="topo-painel">
+        <button class="bt pequeno" data-acao="voltar">◀ Menu</button>
+        <h2>Como jogar</h2>
+      </div>
+      <div class="ajuda-grade">
+        <div><b>Correr</b><span>Joystick à esquerda · Setas ou WASD</span></div>
+        <div><b>Passe</b><span>Botão PASSE · tecla J ou Espaço. Segure para passe longo.</span></div>
+        <div><b>Chute</b><span>Segure CHUTE para encher a força e solte · tecla K. Força demais, a bola sobe!</span></div>
+        <div><b>Corrida</b><span>Botão CORRIDA · tecla L ou Shift</span></div>
+        <div><b>Trocar de jogador</b><span>Botão TROCA · tecla I</span></div>
+        <div><b>Carrinho</b><span>Botão CARRINHO · tecla U. Acerte a bola! Carrinho por trás é falta e cartão</span></div>
+        <div><b>Sem a bola</b><span>CHUTE dá o bote no adversário</span></div>
+        <div><b>Replay</b><span>Depois de um gol, toque em REPLAY (tecla R) para ver de novo em câmera lenta</span></div>
+        <div><b>Mirar o chute</b><span>Na hora de soltar o CHUTE, empurre para cima ou para baixo para escolher o canto</span></div>
+        <div><b>Pênalti</b><span>Mova a mira amarela e segure CHUTE. No gol, escolha o canto ◀ ▲ ▶</span></div>
+        <div><b>Cansaço</b><span>A barra embaixo do jogador mostra a energia. Correr gasta; andar e ficar parado recupera. Cansado, ele fica lento!</span></div>
+        <div><b>Objetivo</b><span>Vença os 8 jogos da campanha e conquiste o HEXA!</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HUD DO JOGO ================= -->
+  <section id="hud" class="tela hud">
+    <div class="placar">
+      <span class="bandeira-mini" id="hud-band-a"></span>
+      <span class="sigla">BRA</span>
+      <span class="gols" id="hud-gols">0 - 0</span>
+      <span class="sigla" id="hud-sigla-b">ADV</span>
+      <span class="bandeira-mini" id="hud-band-b"></span>
+      <span class="relogio" id="hud-relogio">0'</span>
+    </div>
+    <div class="penaltis-placar" id="hud-penaltis"></div>
+    <button class="bt-pausa" id="bt-pausa" aria-label="Pausar">II</button>
+    <button class="bt-replay" id="bt-replay">▶ REPLAY</button>
+    <div class="selo-replay" id="selo-replay">REPLAY <small></small><span>toque PASSE para pular</span></div>
+    <div class="nome-dono" id="nome-dono"></div>
+    <div class="energia" id="energia"><div></div></div>
+    <div class="energia-painel" id="energia-painel">
+      <span id="energia-painel-nome"></span>
+      <div class="trilho"><div id="energia-painel-barra"></div></div>
+      <small>energia</small>
+    </div>
+    <div class="mensagem" id="hud-msg"><div class="msg-texto"></div><div class="msg-sub"></div></div>
+    <div class="barra-forca" id="hud-forca"><div></div></div>
+    <canvas id="radar" width="210" height="136"></canvas>
+    <div class="dica-teclado" id="dica-teclado">Setas: correr · J: passe · K: chute (segure) · L: corrida</div>
+
+    <div class="controles-toque" id="controles-toque">
+      <div id="joystick" class="joystick"><div id="joystick-pino" class="pino"></div></div>
+      <div class="botoes-acao">
+        <button id="bt-troca" class="bt-acao troca">TROCA</button>
+        <button id="bt-carrinho" class="bt-acao carrinho">CARRINHO</button>
+        <button id="bt-corrida" class="bt-acao corrida">CORRIDA</button>
+        <button id="bt-passe" class="bt-acao passe">PASSE</button>
+        <button id="bt-chute" class="bt-acao chute">CHUTE</button>
+      </div>
+    </div>
+    <div class="botoes-goleiro" id="botoes-goleiro">
+      <button data-lado="-1">◀</button>
+      <button data-lado="0">▲</button>
+      <button data-lado="1">▶</button>
+    </div>
+  </section>
+
+  <!-- ================= PAUSA ================= -->
+  <section id="pausa" class="tela sobreposta">
+    <div class="painel pequeno-painel">
+      <h2>Pausa</h2>
+      <button class="bt grande amarelo" data-acao="continuar">Continuar</button>
+      <button class="bt amarelo" data-acao="substituicoes">Substituições</button>
+      <button class="bt azul" data-acao="replay" id="bt-replay-pausa" disabled>Replay do último gol</button>
+      <button class="bt verde" data-acao="som" id="bt-som-pausa">Som: ligado</button>
+      <button class="bt vermelho" data-acao="sair">Sair da partida</button>
+    </div>
+  </section>
+
+  <!-- ================= RESULTADO ================= -->
+  <section id="resultado" class="tela sobreposta">
+    <div class="painel pequeno-painel">
+      <h2 id="res-titulo">Fim de jogo</h2>
+      <div class="res-placar" id="res-placar"></div>
+      <div class="res-estrelas" id="res-estrelas"></div>
+      <p id="res-texto"></p>
+      <div id="res-gols" class="res-gols"></div>
+      <p id="res-fig-texto" class="res-fig"></p>
+      <div id="res-pacotes" class="res-pacotes"></div>
+      <div class="res-botoes" id="res-botoes"></div>
+    </div>
+  </section>
+
+  <!-- ================= CERIMÔNIA DE PREMIAÇÃO ================= -->
+  <section id="campeao" class="tela sobreposta cerimonia">
+    <div class="painel-cerimonia">
+      <h2 id="cer-titulo">É HEXA!</h2>
+      <p id="cer-texto"></p>
+      <div class="premios" id="cer-premios"></div>
+      <div class="cer-botoes" id="cer-botoes"></div>
+    </div>
+  </section>
+
+  <!-- ================= SUBSTITUIÇÕES ================= -->
+  <section id="substituicoes" class="tela sobreposta">
+    <div class="painel largo">
+      <div class="topo-painel">
+        <button class="bt pequeno" data-acao="fechar-sub">◀ Pausa</button>
+        <h2>Substituições <small id="sub-contador">0/5</small></h2>
+      </div>
+      <p class="dica" id="sub-instrucao"></p>
+      <div class="sub-colunas">
+        <div><h3>Em campo</h3><div id="sub-campo" class="lista-sub"></div></div>
+        <div><h3>Banco de reservas</h3><div id="sub-banco" class="lista-sub"></div></div>
+      </div>
+      <p class="sub-erro" id="sub-erro"></p>
+      <div class="acoes-campanha"><span></span><button class="bt grande amarelo" data-acao="sub-voltar-jogo">Voltar ao jogo</button></div>
+    </div>
+  </section>
+
+  <!-- ================= ARTILHARIA ================= -->
+  <section id="artilharia" class="tela">
+    <div class="painel">
+      <div class="topo-painel">
+        <button class="bt pequeno" data-acao="voltar-artilharia">◀ Voltar</button>
+        <h2>Artilheiros</h2>
+      </div>
+      <div class="chips" id="abas-artilharia">
+        <button data-aba="copa">Artilharia da Copa</button>
+        <button data-aba="brasil">Brasil · todos os jogos</button>
+      </div>
+      <p class="dica" id="legenda-artilharia"></p>
+      <table class="tabela-artilharia" id="tabela-artilharia"></table>
+    </div>
+  </section>
+  <!-- ================= GIRAR O CELULAR ================= -->
+  <div id="girar">
+    <div class="celular"></div>
+    <p>Vire o celular de lado para jogar</p>
+  </div>
+
+  <script type="module" src="js/principal.js"></script>
+</body>
+</html>

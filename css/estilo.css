@@ -1,0 +1,359 @@
+:root {
+  --verde: #0a9b3c;
+  --verde-escuro: #06642a;
+  --amarelo: #ffd400;
+  --amarelo-escuro: #d9a800;
+  --azul: #1646b8;
+  --azul-escuro: #0d2f80;
+  --vermelho: #d83a3a;
+  --branco: #ffffff;
+  --tinta: #10213a;
+  --vidro: rgba(8, 28, 20, 0.82);
+  --sombra: 0 6px 0 rgba(0, 0, 0, 0.25);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; height: 100%; overflow: hidden;
+  background: #0a3d1e;
+  font-family: 'Nunito', system-ui, sans-serif;
+  color: var(--branco);
+  user-select: none; -webkit-user-select: none;
+  touch-action: none;
+}
+#tela3d { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+
+button { font-family: inherit; cursor: pointer; }
+
+/* ---------- telas ---------- */
+.tela { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 16px; padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+.tela.ativa { display: flex; }
+.tela.sobreposta { background: rgba(0, 0, 0, 0.45); z-index: 20; }
+
+/* ---------- botões ---------- */
+.bt {
+  border: 0; border-radius: 16px; padding: 12px 22px;
+  font-family: 'Lilita One', 'Nunito', sans-serif; font-size: 20px; letter-spacing: 0.5px;
+  color: var(--branco); background: var(--verde);
+  box-shadow: var(--sombra); transition: transform 0.08s;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+}
+.bt:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); }
+.bt.grande { font-size: 28px; padding: 14px 30px; }
+.bt.amarelo { background: var(--amarelo); color: var(--azul-escuro); text-shadow: none; }
+.bt.verde { background: var(--verde); }
+.bt.azul { background: var(--azul); }
+.bt.vermelho { background: var(--vermelho); }
+.bt.pequeno { font-size: 15px; padding: 9px 14px; border-radius: 12px; background: rgba(255, 255, 255, 0.16); box-shadow: none; }
+.bt:disabled { opacity: 0.45; }
+
+/* ---------- menu ---------- */
+#menu { background: linear-gradient(90deg, rgba(4, 40, 18, 0.85) 0%, rgba(4, 40, 18, 0.55) 55%, rgba(4, 40, 18, 0.1) 100%); justify-content: flex-start; }
+.menu-caixa { display: flex; flex-direction: column; gap: 14px; max-width: 560px; width: 100%; max-height: 100%; overflow-y: auto; padding: 8px 4px; }
+.logo h1 {
+  font-family: 'Lilita One', sans-serif; margin: 0; line-height: 0.92;
+  font-size: clamp(44px, 9vh, 84px); color: var(--amarelo);
+  text-shadow: 0 5px 0 var(--verde-escuro), 0 10px 18px rgba(0, 0, 0, 0.4);
+}
+.logo h1 em { font-style: normal; color: var(--branco); }
+.logo .sub { margin: 6px 0 0; font-weight: 800; font-size: 17px; opacity: 0.95; }
+.estrelas-logo { display: flex; gap: 4px; font-size: 26px; color: var(--amarelo); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3); }
+.estrelas-logo .vazia { color: transparent; -webkit-text-stroke: 2px var(--amarelo); }
+.estrelas-logo.grande { font-size: 44px; justify-content: center; }
+.estrelas-logo .nova { animation: brilho 0.9s infinite alternate; }
+@keyframes brilho { from { transform: scale(1); } to { transform: scale(1.35); color: #fff6a8; } }
+
+.botoes-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.botoes-menu .grande { grid-column: 1 / -1; }
+.opcoes { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+.opcao { display: flex; flex-direction: column; gap: 6px; }
+.rotulo { font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chips button {
+  border: 2px solid rgba(255, 255, 255, 0.4); background: transparent; color: var(--branco);
+  padding: 7px 12px; border-radius: 999px; font-weight: 800; font-size: 14px;
+}
+.chips button.ativo { background: var(--amarelo); border-color: var(--amarelo); color: var(--azul-escuro); }
+.rodape-menu { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---------- painéis ---------- */
+.painel {
+  background: var(--vidro); border-radius: 22px; padding: 18px 20px;
+  width: 100%; max-width: 760px; max-height: 100%; overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); border: 2px solid rgba(255, 255, 255, 0.12);
+}
+.painel.largo { max-width: 980px; }
+.pequeno-painel { max-width: 440px; display: flex; flex-direction: column; gap: 12px; align-items: stretch; text-align: center; }
+.painel h2 { font-family: 'Lilita One', sans-serif; font-weight: 400; margin: 0; font-size: 30px; color: var(--amarelo); }
+.painel h2 small { font-family: 'Nunito'; font-size: 15px; color: var(--branco); opacity: 0.8; font-weight: 800; }
+.painel h3 { margin: 0 0 8px; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.85; }
+.topo-painel { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.dica { opacity: 0.85; font-weight: 700; margin: 6px 0 12px; }
+
+/* ---------- bandeiras ---------- */
+.bandeira { width: 60px; height: 40px; border-radius: 6px; position: relative; overflow: hidden; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); flex: none; }
+.bandeira.br { background: #009c3b; }
+.bandeira.br::before { content: ''; position: absolute; inset: 12% 10%; background: #ffdf00; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.bandeira.br::after { content: ''; position: absolute; width: 36%; height: 54%; left: 32%; top: 23%; border-radius: 50%; background: #002776; }
+.bandeira .bola { position: absolute; width: 40%; height: 60%; left: 30%; top: 20%; border-radius: 50%; }
+.bandeira-mini { display: inline-block; width: 30px; height: 20px; border-radius: 4px; }
+.bandeira-mini .bandeira { width: 30px; height: 20px; border-radius: 4px; }
+
+/* ---------- escolha ---------- */
+.grade-adv { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.carta-adv {
+  display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1); border: 2px solid transparent; color: var(--branco); text-align: left;
+}
+.carta-adv:hover { border-color: var(--amarelo); }
+.carta-adv b { display: block; font-size: 15px; }
+.carta-adv small { opacity: 0.8; font-weight: 800; }
+
+/* ---------- campanha ---------- */
+.trilha { list-style: none; display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 0; margin: 0 0 14px; }
+.trilha li { font-size: 11px; font-weight: 900; text-align: center; padding: 6px 2px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); line-height: 1.15; }
+.trilha li.feito { background: var(--verde); }
+.trilha li.atual { background: var(--amarelo); color: var(--azul-escuro); }
+.campanha-corpo { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; align-items: start; }
+.proximo-jogo { background: rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 14px; text-align: center; }
+.proximo-jogo .fase { font-family: 'Lilita One'; font-size: 22px; color: var(--amarelo); }
+.confronto { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 10px 0; font-family: 'Lilita One'; font-size: 22px; }
+.confronto .lado { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.confronto .x { font-size: 26px; opacity: 0.8; }
+.forca-time { font-size: 13px; font-family: 'Nunito'; font-weight: 800; opacity: 0.85; }
+.tabela-grupo table { width: 100%; border-collapse: collapse; font-weight: 800; font-size: 14px; }
+.tabela-grupo th, .tabela-grupo td { padding: 5px 4px; text-align: center; }
+.tabela-grupo th { opacity: 0.7; font-size: 12px; }
+.tabela-grupo td:first-child, .tabela-grupo th:first-child { text-align: left; }
+.tabela-grupo tr.br td { color: var(--amarelo); }
+.tabela-grupo tr.passa td:first-child::before { content: '●'; color: #5ef08a; margin-right: 4px; }
+.acoes-campanha { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 10px; }
+.historico { font-size: 13px; opacity: 0.85; margin-top: 8px; }
+
+/* ---------- álbum ---------- */
+.trofeus { display: flex; gap: 12px; margin-bottom: 8px; }
+.trofeu { flex: 1; text-align: center; padding: 10px; border-radius: 14px; background: rgba(255, 255, 255, 0.08); font-weight: 800; font-size: 13px; }
+.trofeu .copa { width: 34px; height: 40px; margin: 0 auto 6px; opacity: 0.25; filter: grayscale(1); }
+.trofeu.ganho .copa { opacity: 1; filter: none; }
+.copa { background: linear-gradient(#ffe066, #c9971a); clip-path: polygon(10% 0, 90% 0, 82% 45%, 60% 60%, 60% 78%, 78% 88%, 78% 100%, 22% 100%, 22% 88%, 40% 78%, 40% 60%, 18% 45%); }
+.trofeu.bronze .copa { background: linear-gradient(#f0b27a, #9c5a22); }
+.trofeu.prata .copa { background: linear-gradient(#ffffff, #9aa4ad); }
+.grade-album { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.figurinha {
+  aspect-ratio: 3 / 4; border-radius: 12px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+  background: linear-gradient(160deg, var(--amarelo), #ffb300); color: var(--azul-escuro); box-shadow: 0 3px 0 rgba(0, 0, 0, 0.25); text-align: center;
+}
+.figurinha .geral { font-family: 'Lilita One'; font-size: 26px; line-height: 1; }
+.figurinha .camisa { width: 46px; height: 40px; background: var(--verde); clip-path: polygon(25% 0, 75% 0, 100% 20%, 88% 38%, 80% 32%, 80% 100%, 20% 100%, 20% 32%, 12% 38%, 0 20%); display: grid; place-items: center; color: var(--amarelo); font-family: 'Lilita One'; font-size: 17px; }
+.figurinha .nome { font-weight: 900; font-size: 12px; line-height: 1.1; }
+.figurinha .pos { font-size: 11px; font-weight: 900; opacity: 0.75; }
+.figurinha.vazia { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.5); box-shadow: none; border: 2px dashed rgba(255, 255, 255, 0.25); }
+.figurinha.vazia .camisa { background: rgba(255, 255, 255, 0.15); color: transparent; }
+.figurinha.nova { animation: revelar 0.6s ease-out both; }
+@keyframes revelar { from { transform: rotateY(90deg) scale(0.6); } to { transform: none; } }
+
+/* ---------- ajuda ---------- */
+.ajuda-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ajuda-grade div { background: rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+.ajuda-grade b { color: var(--amarelo); font-size: 16px; }
+.ajuda-grade span { font-weight: 700; font-size: 14px; opacity: 0.92; }
+
+/* ---------- HUD ---------- */
+.hud { pointer-events: none; align-items: stretch; justify-content: stretch; padding: 0; }
+.hud > * { pointer-events: auto; }
+.placar {
+  position: absolute; top: max(10px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 14px;
+  background: rgba(6, 20, 40, 0.85); font-weight: 900; font-size: 18px; white-space: nowrap; pointer-events: none;
+}
+.placar .gols { font-family: 'Lilita One'; font-size: 24px; padding: 0 8px; background: var(--branco); color: var(--tinta); border-radius: 8px; }
+.placar .relogio { margin-left: 6px; color: var(--amarelo); min-width: 44px; text-align: right; }
+.penaltis-placar { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); display: none; flex-direction: column; gap: 4px; background: rgba(6, 20, 40, 0.8); padding: 6px 10px; border-radius: 12px; pointer-events: none; }
+.penaltis-placar.ativo { display: flex; }
+.penaltis-placar .linha { display: flex; align-items: center; gap: 5px; font-weight: 900; font-size: 13px; }
+.penaltis-placar .linha span.s { width: 34px; }
+.penaltis-placar i { width: 14px; height: 14px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); display: inline-block; }
+.penaltis-placar i.g { background: #3ddc6b; }
+.penaltis-placar i.p { background: var(--vermelho); }
+.bt-pausa {
+  position: absolute; top: max(10px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right));
+  width: 48px; height: 48px; border-radius: 50%; border: 0; background: rgba(6, 20, 40, 0.8); color: #fff; font-weight: 900; font-size: 18px;
+}
+.mensagem { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+.mensagem.visivel { opacity: 1; }
+.msg-texto { font-family: 'Lilita One'; font-size: 34px; color: var(--branco); text-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 0, 0, 0.4); white-space: nowrap; }
+.mensagem.grande .msg-texto { font-size: clamp(54px, 13vh, 110px); color: var(--amarelo); text-shadow: 0 6px 0 var(--verde-escuro), 0 0 30px rgba(0, 0, 0, 0.5); animation: pulo 0.5s ease-out; }
+.msg-sub { font-weight: 900; font-size: 20px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7); }
+@keyframes pulo { from { transform: scale(0.3); } 70% { transform: scale(1.15); } to { transform: scale(1); } }
+.barra-forca { position: absolute; bottom: 160px; left: 50%; transform: translateX(-50%); width: 220px; height: 16px; border-radius: 8px; background: rgba(0, 0, 0, 0.5); border: 2px solid #fff; overflow: hidden; display: none; pointer-events: none; }
+.barra-forca.ativa { display: block; }
+.barra-forca div { height: 100%; width: 0; background: linear-gradient(90deg, #3ddc6b 0%, #ffd400 70%, #ff4d4d 92%); }
+#radar { position: absolute; bottom: max(10px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: 160px; height: 104px; border-radius: 6px; pointer-events: none; opacity: 0.92; }
+.dica-teclado { position: absolute; bottom: 124px; left: 50%; transform: translateX(-50%); font-weight: 800; font-size: 13px; background: rgba(0, 0, 0, 0.45); padding: 4px 10px; border-radius: 8px; pointer-events: none; white-space: nowrap; }
+
+.controles-toque { display: none; }
+.toque .controles-toque { display: block; }
+.toque .dica-teclado { display: none; }
+.joystick {
+  position: absolute; left: max(28px, env(safe-area-inset-left)); bottom: max(28px, env(safe-area-inset-bottom));
+  width: 140px; height: 140px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); border: 3px solid rgba(255, 255, 255, 0.4); touch-action: none;
+}
+.joystick .pino { position: absolute; left: 35px; top: 35px; width: 64px; height: 64px; border-radius: 50%; background: rgba(255, 255, 255, 0.85); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); }
+.botoes-acao { position: absolute; right: max(22px, env(safe-area-inset-right)); bottom: max(22px, env(safe-area-inset-bottom)); width: 270px; height: 190px; }
+.bt-acao { position: absolute; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.85); color: #fff; font-weight: 900; font-size: 14px; touch-action: none; box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3); }
+.bt-acao.apertado { transform: scale(0.92); filter: brightness(1.25); }
+.bt-acao.chute { width: 96px; height: 96px; right: 0; bottom: 0; background: rgba(216, 58, 58, 0.85); font-size: 16px; }
+.bt-acao.passe { width: 84px; height: 84px; right: 108px; bottom: 6px; background: rgba(10, 155, 60, 0.85); }
+.bt-acao.corrida { width: 70px; height: 70px; right: 14px; bottom: 112px; background: rgba(22, 70, 184, 0.85); font-size: 11px; }
+.bt-acao.carrinho { width: 74px; height: 74px; right: 98px; bottom: 104px; background: rgba(230, 120, 20, 0.88); font-size: 10px; }
+.bt-acao.troca { width: 66px; height: 66px; right: 202px; bottom: 14px; background: rgba(120, 60, 180, 0.85); font-size: 12px; }
+.em-replay .controles-toque, .em-replay #radar, .em-replay .dica-teclado { display: none !important; }
+.botoes-goleiro { position: absolute; bottom: 30%; left: 50%; transform: translateX(-50%); display: none; gap: 18px; }
+.botoes-goleiro.ativo { display: flex; }
+.botoes-goleiro button { width: 84px; height: 84px; border-radius: 20px; border: 3px solid #fff; background: rgba(22, 70, 184, 0.75); color: #fff; font-size: 32px; }
+.botoes-goleiro button.escolhido { background: var(--amarelo); color: var(--azul-escuro); }
+
+/* ---------- resultado ---------- */
+.res-placar { display: flex; align-items: center; justify-content: center; gap: 14px; font-family: 'Lilita One'; font-size: 40px; }
+.res-estrelas { font-size: 44px; color: var(--amarelo); letter-spacing: 6px; }
+.res-estrelas .apagada { color: rgba(255, 255, 255, 0.2); }
+.res-pacotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.res-pacotes:empty { display: none; }
+.res-botoes { display: flex; flex-direction: column; gap: 10px; }
+#res-texto { font-weight: 800; margin: 0; }
+
+/* ---------- campeão ---------- */
+.campeao-painel { background: linear-gradient(160deg, rgba(10, 155, 60, 0.95), rgba(6, 100, 42, 0.95)); }
+.campeao-painel h2 { font-size: 54px; }
+.taca { width: 90px; height: 110px; margin: 0 auto; background: linear-gradient(#fff3a0, #e0a800 60%, #a87a00); clip-path: polygon(8% 0, 92% 0, 84% 40%, 62% 58%, 62% 76%, 80% 86%, 80% 100%, 20% 100%, 20% 86%, 38% 76%, 38% 58%, 16% 40%); animation: pulo 0.8s ease-out; }
+.confete { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.confete i { position: absolute; top: -20px; width: 10px; height: 14px; animation: cair linear infinite; }
+@keyframes cair { to { transform: translateY(110vh) rotate(720deg); } }
+
+/* ---------- girar ---------- */
+#girar { position: fixed; inset: 0; z-index: 50; background: var(--verde-escuro); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 18px; font-family: 'Lilita One'; font-size: 24px; text-align: center; padding: 16px; }
+#girar .celular { width: 60px; height: 100px; border: 5px solid #fff; border-radius: 12px; animation: girar 1.6s ease-in-out infinite; }
+@keyframes girar { 50% { transform: rotate(-90deg); } }
+@media (orientation: portrait) and (pointer: coarse) { #girar { display: flex; } }
+
+/* ---------- telas baixas (celular deitado) ---------- */
+@media (max-height: 460px) {
+  .menu-caixa { gap: 8px; }
+  .logo h1 { font-size: 44px; }
+  .logo .sub { font-size: 14px; }
+  .estrelas-logo { font-size: 18px; }
+  .bt { font-size: 17px; padding: 9px 16px; }
+  .bt.grande { font-size: 22px; padding: 10px 22px; }
+  .painel { padding: 12px 14px; }
+  .painel h2 { font-size: 24px; }
+  .campanha-corpo { gap: 10px; }
+  .trilha li { font-size: 10px; padding: 4px 2px; }
+  .res-estrelas { font-size: 32px; }
+  .res-placar { font-size: 30px; }
+  .joystick { width: 120px; height: 120px; left: max(18px, env(safe-area-inset-left)); bottom: 18px; }
+  .joystick .pino { left: 28px; top: 28px; width: 58px; height: 58px; }
+  .botoes-acao { transform: scale(0.85); transform-origin: bottom right; }
+  #radar { width: 130px; height: 84px; }
+  .barra-forca { bottom: 110px; }
+}
+@media (max-width: 700px) {
+  .campanha-corpo { grid-template-columns: 1fr; }
+  .ajuda-grade { grid-template-columns: 1fr; }
+  .botoes-menu { grid-template-columns: 1fr; }
+  .trilha { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ---------- nome de quem está com a bola ---------- */
+.nome-dono {
+  position: fixed; left: 0; top: 0; pointer-events: none; display: none;
+  padding: 3px 9px; border-radius: 999px; font-weight: 900; font-size: 13px; white-space: nowrap;
+  background: rgba(255, 212, 0, 0.92); color: var(--azul-escuro); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+.nome-dono.ativo { display: block; }
+.nome-dono.adversario { background: rgba(20, 30, 50, 0.85); color: #fff; }
+
+/* ---------- replay ---------- */
+.bt-replay {
+  position: absolute; top: max(10px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left));
+  display: none; border: 0; border-radius: 12px; padding: 10px 14px; background: rgba(22, 70, 184, 0.9);
+  color: #fff; font-family: 'Lilita One'; font-size: 16px; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+}
+.bt-replay.ativo { display: block; }
+.em-replay .bt-replay { display: none; }
+.selo-replay {
+  position: absolute; top: 64px; left: 50%; transform: translateX(-50%); display: none; pointer-events: none;
+  flex-direction: column; align-items: center; font-family: 'Lilita One'; font-size: 30px; color: #fff;
+  background: rgba(216, 58, 58, 0.9); padding: 4px 18px 6px; border-radius: 12px; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+.selo-replay.ativo { display: flex; animation: piscar 1.2s infinite; }
+.selo-replay small { font-family: 'Nunito'; font-weight: 900; font-size: 14px; }
+.selo-replay span { font-family: 'Nunito'; font-weight: 800; font-size: 11px; opacity: 0.85; }
+@keyframes piscar { 50% { opacity: 0.75; } }
+
+/* ---------- figurinhas ganhas ---------- */
+.res-fig { margin: 0; font-weight: 700; font-size: 14px; line-height: 1.35; }
+.res-fig b { color: var(--amarelo); font-size: 16px; }
+.res-pacotes { max-height: 210px; overflow-y: auto; }
+.figurinha { position: relative; }
+.figurinha .selo { position: absolute; top: -6px; right: -6px; font-size: 10px; font-weight: 900; padding: 2px 6px; border-radius: 999px; background: #8a94a6; color: #fff; }
+.figurinha .selo.novo { background: var(--vermelho); animation: brilho 0.8s infinite alternate; }
+.escolha-topo { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.opcao.mando { margin-bottom: 12px; }
+@media (max-height: 460px) {
+  .res-pacotes { max-height: 120px; }
+  .figurinha .geral { font-size: 20px; }
+}.pequeno-painel > * { flex-shrink: 0; }
+.res-pacotes { grid-template-columns: repeat(auto-fill, 96px); justify-content: center; padding-top: 6px; }
+/* ---------- barra de cansaço ---------- */
+.energia { position: fixed; left: 0; top: 0; width: 46px; height: 7px; border-radius: 4px; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.8); overflow: hidden; display: none; pointer-events: none; }
+.energia.ativo { display: block; }
+.energia div { height: 100%; width: 100%; background: #3ddc6b; }
+.energia-painel {
+  position: absolute; top: max(62px, calc(env(safe-area-inset-top) + 52px)); left: max(12px, env(safe-area-inset-left));
+  display: none; flex-direction: column; gap: 3px; padding: 6px 10px; border-radius: 10px; background: rgba(6, 20, 40, 0.8);
+  font-weight: 900; font-size: 13px; pointer-events: none; min-width: 130px;
+}
+.energia-painel.ativo { display: flex; }
+.energia-painel .trilho { height: 9px; border-radius: 5px; background: rgba(255, 255, 255, 0.18); overflow: hidden; }
+.energia-painel .trilho div { height: 100%; width: 100%; background: #3ddc6b; transition: width 0.2s; }
+.energia-painel small { font-size: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+.em-replay .energia-painel { display: none !important; }
+/* ---------- gols no resultado ---------- */
+.res-gols { font-weight: 800; font-size: 13px; line-height: 1.5; opacity: 0.95; }
+.res-gols:empty { display: none; }
+
+/* ---------- cerimônia ---------- */
+#campeao.cerimonia { background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.55) 100%); align-items: flex-end; }
+.painel-cerimonia { width: 100%; max-width: 820px; text-align: center; display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; }
+.painel-cerimonia h2 { margin: 0; font-family: 'Lilita One'; font-weight: 400; font-size: clamp(36px, 8vh, 64px); color: var(--amarelo); text-shadow: 0 4px 0 var(--verde-escuro), 0 0 24px rgba(0, 0, 0, 0.5); }
+.painel-cerimonia p { margin: 0; font-weight: 900; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8); }
+.premios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.premio { background: rgba(6, 20, 40, 0.82); border: 2px solid rgba(255, 212, 0, 0.6); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 2px; font-size: 13px; font-weight: 800; }
+.premio .icone { font-size: 22px; }
+.premio b { color: var(--amarelo); font-family: 'Lilita One'; font-weight: 400; font-size: 17px; }
+.cer-botoes { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- substituições ---------- */
+.sub-colunas { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.lista-sub { display: flex; flex-direction: column; gap: 5px; max-height: 46vh; overflow-y: auto; padding-right: 4px; }
+.linha-sub { display: grid; grid-template-columns: 30px 1fr 40px 60px; align-items: center; gap: 6px; padding: 7px 9px; border-radius: 10px; border: 2px solid transparent; background: rgba(255, 255, 255, 0.08); color: #fff; font-weight: 800; font-size: 14px; text-align: left; }
+.linha-sub:hover:not(:disabled) { border-color: var(--amarelo); }
+.linha-sub.selecionado { background: var(--amarelo); color: var(--azul-escuro); }
+.linha-sub:disabled { opacity: 0.45; }
+.linha-sub .num { font-family: 'Lilita One'; font-size: 17px; text-align: center; }
+.linha-sub .pos, .linha-sub .geral { font-size: 12px; opacity: 0.85; text-align: center; }
+.mini-energia { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.2); overflow: hidden; }
+.mini-energia i { display: block; height: 100%; }
+.sub-erro { color: #ff8a8a; font-weight: 900; margin: 6px 0 0; min-height: 1em; }
+
+/* ---------- artilharia ---------- */
+#abas-artilharia { margin-bottom: 6px; }
+.tabela-artilharia { width: 100%; border-collapse: collapse; font-weight: 800; }
+.tabela-artilharia th { text-align: left; font-size: 12px; opacity: 0.7; padding: 4px 6px; }
+.tabela-artilharia td { padding: 6px; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.tabela-artilharia td:first-child { width: 36px; text-align: center; font-size: 18px; }
+.tabela-artilharia td:last-child, .tabela-artilharia th:last-child { text-align: center; width: 50px; font-size: 18px; color: var(--amarelo); }
+.tabela-artilharia tr.br td:nth-child(2) { color: var(--amarelo); }
+.band-cel { display: inline-block; vertical-align: middle; }
+@media (max-width: 700px) { .sub-colunas, .premios { grid-template-columns: 1fr; } }
+@media (max-height: 460px) { .premio .icone { display: none; } .premio { padding: 5px; } .lista-sub { max-height: 40vh; } }
